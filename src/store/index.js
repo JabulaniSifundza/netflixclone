@@ -74,6 +74,20 @@ const NetflixSlice = createSlice({
 })
 
 
+export const removeMovieFromLiked = createAsyncThunk(
+	"netflix/deleteLiked",
+	async ({ movieId, email }) => {
+	  const {
+		data: { movies },
+	  } = await axios.put("http://localhost:5000/api/user/remove", {
+		email,
+		movieId,
+	  });
+	  return movies;
+	}
+  );
+
+
 
 export const store = configureStore({
 	reducer:{

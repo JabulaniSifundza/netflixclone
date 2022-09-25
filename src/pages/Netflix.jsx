@@ -1,75 +1,76 @@
-import React, {useState, useEffect} from 'react';
-import Navbar from '../components/Navbar';
-import Slider from '../components/Slider';
-
-import Card from '../components/Card';
-import BackgroundImage from "../assets/home.jpg";
-import MovieLogo from '../assets/homeTitle.webp';
-import {FaPlay} from 'react-icons/fa';
-import {AiOutlineInfoCircle} from 'react-icons/ai';
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import Navbar from "../components/Navbar";
+import backgroundImage from "../assets/home.jpg";
+import MovieLogo from "../assets/homeTitle.webp";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { firebaseAuth } from "../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
-import {useDispatch, useSelector } from "react-redux";
-import {getGenres, fetchMovies} from '../store';
- 
+import { useSelector, useDispatch } from "react-redux";
+import { fetchMovies, getGenres } from "../store";
+import { FaPlay } from "react-icons/fa";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import Slider from "../components/Slider";
+function Netflix() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const movies = useSelector((state) => state.netflix.movies);
+  const genres = useSelector((state) => state.netflix.genres);
+  const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
 
-export default function Netflix(){
-	const [isScrolled, setIsScrolled] = useState(false);
-	const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-	const genresLoaded = useSelector((state)=>
-		state.netflix.genresLoaded
-	);
+  useEffect(() => {
+    dispatch(getGenres());
+  }, []);
 
-	const movies = useSelector((state)=>
-		state.netflix.movies
-	);
-	
-	
+  useEffect(() => {
+    if (genresLoaded) {
+      dispatch(fetchMovies({ genres, type: "all" }));
+    }
+  }, [genresLoaded]);
 
-	useEffect(()=>{
-		dispatch(getGenres());
+  onAuthStateChanged(firebaseAuth, (currentUser) => {
+    if (!currentUser) navigate("/login");
+  });
 
-	}, [])
+  window.onscroll = () => {
+    setIsScrolled(window.pageYOffset === 0 ? false : true);
+    return () => (window.onscroll = null);
+  };
 
-	useEffect(()=>{
-		if(genresLoaded) dispatch(fetchMovies({type:"all"}))
-
-	}, [])
-	
-
-
-
-	window.onscroll = () =>{
-		setIsScrolled(window.pageYOffset === 0 ? false : true)
-		return () => (window.onscroll = null);
-	}	
-	const navigate = useNavigate();
-
-	return (<Container>
-			<Navbar isScrolled={isScrolled}/>
-			<div className="hero">
-				<img src={BackgroundImage} alt="Hero" className="background-image"/>
-				<div className="container">
-					<div className="logo">
-						<img src={MovieLogo} alt="Movie Logo" />
-					</div>
-					<div className="buttons flex">
-						<button className="flex j-center a-center" onClick={()=> navigate("/player")}>
-						<FaPlay /> Play
-						</button>
-
-						<button className="flex j-center a-center">
-						<AiOutlineInfoCircle /> More info
-						</button>
-					
-					</div>
-				</div>
-			</div>
-		<Slider movies={movies}/>
-		</Container>
-
-	)
+  return (
+    <Container>
+      <Navbar isScrolled={isScrolled} />
+      <div className="hero">
+        <img
+          src={backgroundImage}
+          alt="background"
+          className="background-image"
+        />
+        <div className="container">
+          <div className="logo">
+            <img src={MovieLogo} alt="Movie Logo" />
+          </div>
+          <div className="buttons flex">
+            <button
+              onClick={() => navigate("/player")}
+              className="flex j-center a-center"
+            >
+              <FaPlay />
+              Play
+            </button>
+            <button className="flex j-center a-center">
+              <AiOutlineInfoCircle />
+              More Info
+            </button>
+          </div>
+        </div>
+      </div>
+      <Slider movies={movies} />
+    </Container>
+  );
 }
 
 const Container = styled.div`
@@ -121,3 +122,4 @@ const Container = styled.div`
     }
   }
 `;
+export default Netflix;

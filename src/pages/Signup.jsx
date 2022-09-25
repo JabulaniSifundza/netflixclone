@@ -73,7 +73,7 @@ import {
 				<button onClick={() => setShowPassword(true)}>Get Started</button>
 			  )}
 			</div>
-			{showPassword && <button onClick={handleSignIn}>Log In</button>}
+			{showPassword && <button onClick={handleSignIn}>Sign up</button>}
 		  </div>
 		</div>
 	  </Container>

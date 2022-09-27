@@ -113,7 +113,7 @@ const Container = styled.div`
   cursor: pointer;
   position: relative;
   img {
-    border-radius: 0.2rem;
+    border-radius: 0.25rem;
     width: 100%;
     height: 100%;
     z-index: 10;

@@ -85,7 +85,7 @@ export default React.memo(function Card({ index, movieData, isLiked = false }) {
                     }
                   />
                 ) : (
-                  <AiOutlinePlus title="Add to my list" onClick={addToList} />
+                  <AiOutlinePlus title="Add to my list" onClick={addToList}/>
                 )}
               </div>
               <div className="info">
